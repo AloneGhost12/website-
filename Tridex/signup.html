@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tidex — Sign up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+</head>
+<body class="theme-light">
+  <header class="nav">
+    <div class="container row between center">
+      <a class="brand row center" href="index.html" aria-label="Tidex home">
+        <img src="assets/logo.svg" alt="Tidex logo" class="logo" />
+        <span class="brand-name">Tidex</span>
+      </a>
+      <div class="actions row center">
+        <a class="link" href="login.html">Sign in</a>
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme"><span class="icon sun"></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card fade-up">
+      <div class="auth-head">
+        <img src="assets/logo.svg" class="logo sm" alt="" />
+        <strong>Create your account</strong>
+      </div>
+      <form class="auth-body" id="signup-form" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input id="name" type="text" placeholder="Alex Doe" required />
+        </div>
+        <div class="field">
+          <label for="username">Username (optional)</label>
+          <input id="username" type="text" placeholder="alex" />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="you@domain.com" required />
+        </div>
+        <div class="field">
+          <label for="phone">Phone (optional)</label>
+          <input id="phone" type="tel" placeholder="9876543210" />
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div style="position:relative">
+            <input id="password" type="password" placeholder="••••••••" required minlength="6" style="padding-right:42px" />
+            <button type="button" aria-label="Show password" data-toggle="password" data-target="password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:18px">👁️</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="confirm">Confirm password</label>
+          <div style="position:relative">
+            <input id="confirm" type="password" placeholder="••••••••" required minlength="6" style="padding-right:42px" />
+            <button type="button" aria-label="Show password" data-toggle="password" data-target="confirm" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:18px">👁️</button>
+          </div>
+        </div>
+        <div id="signup-error" class="error" role="alert" aria-live="polite"></div>
+        <button class="btn gradient block" id="signup-btn" type="submit">Create account</button>
+        <p class="muted xs">By continuing you agree to our Terms and Privacy.</p>
+      </form>
+    </section>
+  </main>
+
+  <script src="auth.js" defer></script>
+</body>
+</html>

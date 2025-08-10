@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tidex — Shop the latest</title>
+    <meta name="description" content="Tidex: A beautiful shopping experience. Discover trending products with a sleek, fast UI." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  </head>
+  <body class="theme-light">
+    <header class="nav">
+      <div class="container row between center">
+        <a class="brand row center" href="#" aria-label="Tidex home">
+          <img src="assets/logo.svg" alt="Tidex logo" class="logo" />
+          <span class="brand-name">Tidex</span>
+        </a>
+
+        <div class="search">
+          <input id="search" type="search" placeholder="Search products…" aria-label="Search products" />
+          <span class="kbd">/</span>
+        </div>
+
+        <div class="actions row center">
+          <div id="user-area" class="row center"></div>
+          <button id="mail-btn" class="icon-btn" aria-label="Announcements" title="Announcements">
+            <span class="icon" style="mask-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22white%22 stroke-width=%222%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 d=%22M3 8l9 6 9-6M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z%22/%3E%3C/svg%3E')"></span>
+            <span id="mail-count" class="badge" style="display:none">0</span>
+          </button>
+          <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+            <span class="icon sun" aria-hidden="true"></span>
+          </button>
+          <button id="cart-btn" class="icon-btn cart" aria-label="Open cart" title="View cart">
+            <span class="icon cart" aria-hidden="true"></span>
+            <span id="cart-count" class="badge" aria-live="polite">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="hero-text">
+            <h1>Find your style with Tidex</h1>
+            <p>Fresh drops, everyday essentials, and hand-picked tech. Beautifully curated for you.</p>
+            <div class="hero-cta">
+              <a href="#products" class="btn primary">Shop now</a>
+              <a href="#trending" class="btn ghost">Trending</a>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="card-float">
+              <img src="https://picsum.photos/seed/tidex-hero/480/360" alt="Featured" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="trending" class="section">
+        <div class="container">
+          <div class="section-head row between center">
+            <h2>Browse categories</h2>
+          </div>
+          <div id="categories" class="pill-row" role="tablist" aria-label="Product categories">
+            <!-- Pills injected by JS -->
+          </div>
+        </div>
+      </section>
+
+      <section id="products" class="section">
+        <div class="container">
+          <div class="section-head row between center">
+            <h2>Products</h2>
+            <div class="sort">
+              <label for="sort-select">Sort</label>
+              <select id="sort-select" aria-label="Sort products">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating-desc">Rating</option>
+              </select>
+            </div>
+          </div>
+          <div id="product-grid" class="grid">
+            <!-- Cards injected by JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true" aria-labelledby="cart-title" role="dialog">
+      <div class="drawer">
+        <div class="drawer-head row between center">
+          <h3 id="cart-title">Your cart</h3>
+          <button id="cart-close" class="icon-btn" aria-label="Close cart">
+            <span class="icon close" aria-hidden="true"></span>
+          </button>
+        </div>
+        <div id="cart-items" class="drawer-body">
+          <!-- Items injected by JS -->
+        </div>
+        <div class="drawer-foot">
+          <div class="row between center totals">
+            <span>Subtotal</span>
+            <strong id="cart-subtotal">$0.00</strong>
+          </div>
+          <button class="btn primary block" id="checkout-btn">Checkout</button>
+          <p class="muted xs">Taxes and shipping calculated at checkout.</p>
+        </div>
+      </div>
+      <div id="cart-backdrop" class="backdrop" tabindex="-1" aria-hidden="true"></div>
+    </aside>
+
+    <footer class="footer">
+      <div class="container row between start">
+        <div class="col">
+          <div class="row center">
+            <img src="assets/logo.svg" class="logo sm" alt="Tidex" />
+            <strong class="brand-name">Tidex</strong>
+          </div>
+          <p class="muted">Beautiful shopping made simple.</p>
+        </div>
+        <form id="newsletter" class="col newsletter" aria-label="Subscribe to newsletter">
+          <label for="email" class="muted">Get updates</label>
+          <div class="row">
+            <input id="email" type="email" placeholder="you@domain.com" required />
+            <button class="btn">Subscribe</button>
+          </div>
+        </form>
+      </div>
+      <div class="container fineprint">
+        <p class="muted xs">© <span id="year"></span> Tidex. All rights reserved.</p>
+      </div>
+    </footer>
+
+  <div id="modal" class="modal" style="display:none;position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);">
+    <div class="box" style="background:#fff;color:#222;max-width:420px;width:90vw;padding:2em 1.5em;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;">
+      <button id="modal-close" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5em;line-height:1;cursor:pointer;">&times;</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+  <script src="auth.js" defer></script>
+  <script src="script.js" defer></script>
+  </body>
+  </html>

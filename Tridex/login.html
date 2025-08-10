@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tidex — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+</head>
+<body class="theme-light">
+  <header class="nav">
+    <div class="container row between center">
+      <a class="brand row center" href="index.html" aria-label="Tidex home">
+        <img src="assets/logo.svg" alt="Tidex logo" class="logo" />
+        <span class="brand-name">Tidex</span>
+      </a>
+      <div class="actions row center">
+        <a class="link" href="signup.html">Create account</a>
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme"><span class="icon sun"></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card fade-up">
+      <div class="auth-head">
+        <img src="assets/logo.svg" class="logo sm" alt="" />
+        <strong>Welcome back</strong>
+      </div>
+      <form class="auth-body" id="login-form" novalidate>
+        <div class="field">
+          <label for="identifier">Email, Username, or Phone</label>
+          <input id="identifier" type="text" placeholder="you@domain.com or username or 9876543210" required />
+        </div>
+        <div class="field">
+          <div class="row between center">
+            <label for="password">Password</label>
+            <a class="link" href="forgot-password.html" id="forgot">Forgot?</a>
+          </div>
+          <div class="pw-wrap" style="position:relative;display:block">
+            <input id="password" type="password" placeholder="••••••••" required minlength="6" style="padding-right:42px" />
+            <button type="button" aria-label="Show password" title="Show/Hide" data-toggle="password" data-target="password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:18px">👁️</button>
+          </div>
+        </div>
+        <div id="login-error" class="error" role="alert" aria-live="polite"></div>
+        <button class="btn gradient block" id="login-btn" type="submit">Sign in</button>
+        <p class="muted xs">Don’t have an account? <a class="link" href="signup.html">Create one</a>.</p>
+      </form>
+    </section>
+  </main>
+
+  <script src="auth.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tidex — Product</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme-light">
+  <header class="nav">
+    <div class="container row between center">
+      <a class="brand row center" href="index.html" aria-label="Tidex home">
+        <img src="assets/logo.svg" alt="Tidex logo" class="logo" />
+        <span class="brand-name">Tidex</span>
+      </a>
+      <div class="actions row center">
+        <div id="user-area" class="row center"></div>
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme"><span class="icon sun"></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <a href="index.html" class="link">← Back to products</a>
+      <div id="pwrap" class="grid" style="grid-template-columns:repeat(12,1fr);gap:16px;margin-top:12px">
+        <section class="card" style="grid-column:span 6">
+          <div class="media"><img id="pimg" alt="" style="display:block;width:100%;height:auto"></div>
+        </section>
+        <section class="card" style="grid-column:span 6">
+          <div class="body">
+            <div class="muted xs" id="pcat"></div>
+            <h2 id="ptitle" style="margin:.2em 0 .4em"></h2>
+            <div class="price-row" style="margin:.2em 0 1em">
+              <span class="price" id="pprice"></span>
+              <span class="rating" id="prating"></span>
+            </div>
+            <p id="pdesc" class="muted" style="line-height:1.5"></p>
+            <div class="row" style="margin-top:12px;gap:10px;align-items:center">
+              <div class="qty"><button id="dec">−</button><input id="qty" value="1" /><button id="inc">+</button></div>
+              <button id="addtocart" class="btn primary">Add to cart</button>
+            </div>
+          </div>
+        </section>
+      </div>
+      <section class="card" style="margin-top:16px">
+        <div class="body">
+          <h3>Reviews</h3>
+          <div id="reviews" class="auth-body" style="padding:0"></div>
+          <form id="rev-form" class="auth-body" style="padding:0;margin-top:10px">
+            <div class="row" style="gap:8px;align-items:center">
+              <label>Rating <select id="rev-rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label>
+              <input id="rev-text" placeholder="Write a review" style="flex:1" />
+              <button class="btn">Post</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="auth.js" defer></script>
+  <script src="product.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tidex Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="brand"><img src="assets/logo.svg" alt="" /><strong>Tidex Admin</strong></div>
+      <div class="row">
+        <button id="admin-theme" class="btn" title="Toggle theme">Theme</button>
+        <button id="admin-mailbox" class="btn" title="Announcements" style="position:relative">
+          <span style="font-size:20px;vertical-align:middle;">📬</span>
+        </button>
+        <a href="index.html" class="btn">Storefront</a>
+        <button id="logout" class="btn">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="kpis">
+      <div class="card fade"><h4>Revenue</h4><div id="kpi-rev">$0</div></div>
+      <div class="card fade"><h4>Orders</h4><div id="kpi-orders">0</div></div>
+      <div class="card fade"><h4>Users</h4><div id="kpi-users">0</div></div>
+      <div class="card fade"><h4>Products</h4><div id="kpi-products">0</div></div>
+    </section>
+
+    <div class="tabs">
+      <button data-tab="products" class="tab active">Products</button>
+      <button data-tab="users" class="tab">Users</button>
+      <button data-tab="orders" class="tab">Orders</button>
+    </div>
+
+    <section id="tab-products" class="fade" style="margin-top:10px">
+      <div class="grid">
+        <div class="span-8">
+          <table class="table" id="products-table">
+            <thead><tr><th>Title</th><th>Category</th><th>Price</th><th>Stock</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="span-4">
+          <div class="card">
+            <h4>Add product</h4>
+            <div class="row" style="margin-top:8px"><input id="p-title" class="input" placeholder="Title" style="flex:1"/></div>
+            <div class="row" style="margin-top:8px"><input id="p-cat" class="input" placeholder="Category" style="flex:1"/></div>
+            <div class="row" style="margin-top:8px"><input id="p-price" class="input" placeholder="Price" type="number" step="0.01" style="flex:1"/></div>
+            <div class="row" style="margin-top:8px"><input id="p-stock" class="input" placeholder="Stock" type="number" style="flex:1"/></div>
+            <div class="row" style="margin-top:8px"><input id="p-img" class="input" placeholder="Image URL" style="flex:1"/></div>
+            <div class="row" style="margin-top:8px"><textarea id="p-desc" class="input" placeholder="Description" style="flex:1;height:90px"></textarea></div>
+            <div class="row" style="margin-top:10px;justify-content:flex-end"><button id="add-product" class="btn primary">Add</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-users" class="fade" style="display:none;margin-top:10px">
+      <table class="table" id="users-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Created</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="tab-orders" class="fade" style="display:none;margin-top:10px">
+      <table class="table" id="orders-table">
+        <thead><tr><th>ID</th><th>User</th><th>Items</th><th>Subtotal</th><th>Status</th><th>Updated</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <div id="modal" class="modal"><div class="box"><div id="modal-content"></div></div></div>
+
+  <script src="admin.js" defer></script>
+  <script>
+    (function(){
+      const key = 'tidex-admin-theme';
+      const root = document.body;
+      function setTheme(t){ root.classList.toggle('theme-light', t==='light'); localStorage.setItem(key, t); }
+      setTheme(localStorage.getItem(key) || 'dark');
+      document.getElementById('admin-theme').addEventListener('click', ()=>{
+        const next = root.classList.contains('theme-light') ? 'dark' : 'light';
+        setTheme(next);
+      });
+
+      // Mailbox click handler
+      document.getElementById('admin-mailbox').addEventListener('click', async function(){
+        const API_BASE = localStorage.getItem('tidex-api') || 'http://localhost:3000';
+        const ADMIN_KEY = localStorage.getItem('tidex-admin-key') || '';
+        try {
+          const res = await fetch(`${API_BASE}/api/announcements`, { headers: { 'X-Admin-Key': ADMIN_KEY } });
+          if(!res.ok) throw new Error('Failed to load announcements');
+          const data = await res.json();
+          let html = '<h3>Announcements</h3>';
+          if(!data.length) html += '<p style="color:#8a94a6">No announcements yet.</p>';
+          else html += '<ul style="padding-left:1.2em">' + data.map(a=>`<li><strong>${a.title||'Announcement'}</strong><br><span style='font-size:13px;color:#8a94a6'>${new Date(a.createdAt).toLocaleString()}</span><br>${a.body||''}</li>`).join('') + '</ul>';
+          document.getElementById('modal-content').innerHTML = html;
+          document.getElementById('modal').style.display = 'flex';
+        } catch(e) {
+          document.getElementById('modal-content').innerHTML = '<p style="color:#e66">Could not load announcements.</p>';
+          document.getElementById('modal').style.display = 'flex';
+        }
+      });
+      // Modal close on click outside
+      document.getElementById('modal').addEventListener('click', function(e){
+        if(e.target === this) this.style.display = 'none';
+      });
+    })();
+  </script>
+</body>
+</html>

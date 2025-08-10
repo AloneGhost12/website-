@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tidex — Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme-light">
+  <header class="nav">
+    <div class="container row between center">
+      <a class="brand row center" href="index.html" aria-label="Tidex home">
+        <img src="assets/logo.svg" alt="Tidex logo" class="logo" />
+        <span class="brand-name">Tidex</span>
+      </a>
+      <div class="actions row center">
+        <div id="user-area" class="row center"></div>
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme"><span class="icon sun"></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width:1000px">
+      <h2>Account</h2>
+      <div class="pill-row" id="tabs">
+        <button class="pill active" data-tab="profile">Profile</button>
+        <button class="pill" data-tab="addresses">Addresses</button>
+        <button class="pill" data-tab="orders">Orders</button>
+        <button class="pill" data-tab="preferences">Preferences</button>
+      </div>
+
+      <section class="card" data-panel="profile" style="margin-top:16px">
+        <div class="body">
+          <h3>Profile</h3>
+          <div class="row" style="gap:16px;align-items:center;margin:6px 0 12px">
+            <img id="avatar" src="" alt="Avatar" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid var(--border);background:var(--card)" />
+            <div class="row" style="gap:8px">
+              <input id="avatar-file" type="file" accept="image/*" />
+              <button id="avatar-upload" class="btn">Upload</button>
+              <button id="avatar-remove" class="btn" style="border-color:var(--danger);color:var(--danger)">Remove</button>
+            </div>
+          </div>
+          <form id="profile-form" class="auth-body" style="padding:0">
+            <div class="field"><label for="name">Full name</label><input id="name" /></div>
+            <div class="field"><label for="email">Email</label><input id="email" type="email" disabled /></div>
+            <div class="row" style="justify-content:flex-end;gap:8px">
+              <button id="delete-account" class="btn" type="button" style="border-color:var(--danger);color:var(--danger)">Delete account</button>
+              <button class="btn primary" type="submit">Save</button>
+            </div>
+          </form>
+
+          <hr style="border:0;border-top:1px solid var(--border);margin:16px 0" />
+          <h3>Change password</h3>
+          <form id="password-form" class="auth-body" style="padding:0">
+            <div class="field">
+              <label for="current">Current password</label>
+              <div style="position:relative">
+                <input id="current" type="password" placeholder="••••••••" required minlength="6" style="padding-right:42px" />
+                <button type="button" aria-label="Show password" data-toggle="password" data-target="current" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:18px">👁️</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="newpass">New password</label>
+              <div style="position:relative">
+                <input id="newpass" type="password" placeholder="••••••••" required minlength="6" style="padding-right:42px" />
+                <button type="button" aria-label="Show password" data-toggle="password" data-target="newpass" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:18px">👁️</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="confirm">Confirm new password</label>
+              <div style="position:relative">
+                <input id="confirm" type="password" placeholder="••••••••" required minlength="6" style="padding-right:42px" />
+                <button type="button" aria-label="Show password" data-toggle="password" data-target="confirm" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;cursor:pointer;font-size:18px">👁️</button>
+              </div>
+            </div>
+            <div class="row" style="justify-content:flex-end"><button class="btn primary" type="submit">Update password</button></div>
+          </form>
+        </div>
+      </section>
+
+      <section class="card" data-panel="addresses" style="margin-top:16px;display:none">
+        <div class="body">
+          <h3>Addresses</h3>
+          <div id="addr-list" class="auth-body" style="padding:0"></div>
+          <details style="margin-top:10px">
+            <summary class="muted">Add new address</summary>
+            <form id="addr-form" class="auth-body" style="padding:10px 0">
+              <div class="field"><label>Label</label><input id="addr-label" placeholder="Home / Work" /></div>
+              <div class="field"><label>Name</label><input id="addr-name" placeholder="Full name" /></div>
+              <div class="field"><label>Phone</label><input id="addr-phone" placeholder="Phone" /></div>
+              <div class="field"><label>Address line 1</label><input id="addr-line1" /></div>
+              <div class="field"><label>Address line 2</label><input id="addr-line2" /></div>
+              <div class="row"><div class="field" style="flex:1"><label>City</label><input id="addr-city" /></div><div class="field" style="flex:1"><label>State</label><input id="addr-state" /></div></div>
+              <div class="row"><div class="field" style="flex:1"><label>ZIP</label><input id="addr-zip" /></div><div class="field" style="flex:1"><label>Country</label><input id="addr-country" value="IN" /></div></div>
+              <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input type="checkbox" id="addr-default" /> Set as default</label>
+              <div class="row" style="justify-content:flex-end"><button class="btn" type="submit">Add address</button></div>
+            </form>
+          </details>
+        </div>
+      </section>
+
+      <section class="card" data-panel="orders" style="margin-top:16px;display:none">
+        <div class="body">
+          <h3>Orders</h3>
+          <div id="orders" class="auth-body" style="padding:0"></div>
+          <p class="muted xs">Place an order from the cart to see it here.</p>
+        </div>
+      </section>
+
+      <section class="card" data-panel="preferences" style="margin-top:16px;display:none">
+        <div class="body">
+          <h3>Preferences</h3>
+          <div class="auth-body" style="padding:0">
+            <div class="row between center">
+              <span>Theme</span>
+              <button id="theme-toggle-pref" class="btn">Toggle light/dark</button>
+            </div>
+            <div class="row" style="justify-content:flex-end">
+              <button id="signout" class="btn">Sign out</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="auth.js" defer></script>
+  <script>
+    (async function(){
+      const API = (path) => `${localStorage.getItem('tidex-api') || 'http://localhost:3000'}/api${path}`;
+      const key = 'tidex-theme';
+      const root = document.body;
+      const saved = localStorage.getItem(key)||'light';
+      root.classList.toggle('theme-light', saved==='light');
+
+  const u = JSON.parse(localStorage.getItem('tidex-user-v1')||'null');
+      if(!u){ location.href='login.html'; return; }
+
+      // Tabs
+      const tabs = document.getElementById('tabs');
+      const panels = Array.from(document.querySelectorAll('[data-panel]'));
+      tabs.addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-tab]'); if(!btn) return;
+        tabs.querySelectorAll('.pill').forEach(b => b.classList.toggle('active', b===btn));
+        const id = btn.getAttribute('data-tab');
+        panels.forEach(p => p.style.display = p.getAttribute('data-panel') === id ? '' : 'none');
+      });
+
+      // Load existing profile if backend available (optional)
+      const form = document.getElementById('profile-form');
+      const email = document.getElementById('email');
+      const name = document.getElementById('name');
+      name.value = u.name||''; email.value = u.email||'';
+
+      // Try to refresh user from backend
+      if(u.token){
+        try{
+          const me = await fetch(API('/me'), { headers: { Authorization: `Bearer ${u.token}` } });
+          if(me.ok){ const d = await me.json(); name.value = d.name||name.value; email.value = d.email||email.value; if(d.profilePicUrl) document.getElementById('avatar').src = d.profilePicUrl; }
+        }catch{}
+      }
+      // Avatar actions
+      const avatarEl = document.getElementById('avatar');
+      const fileEl = document.getElementById('avatar-file');
+      document.getElementById('avatar-upload').addEventListener('click', async (e)=>{
+        e.preventDefault();
+        if(!fileEl.files || !fileEl.files[0]){ alert('Choose an image first.'); return; }
+        const fd = new FormData(); fd.append('file', fileEl.files[0]);
+        try{
+          const res = await fetch(API('/user/profile-pic'), { method:'POST', headers: { ...(u.token ? { Authorization: `Bearer ${u.token}` } : {}) }, body: fd });
+          if(!res.ok) throw 0; const data = await res.json(); avatarEl.src = data.profilePicUrl; alert('Profile picture updated.');
+        }catch{ alert('Upload failed (backend may be offline).'); }
+      });
+      document.getElementById('avatar-remove').addEventListener('click', async (e)=>{
+        e.preventDefault();
+        try{
+          const res = await fetch(API('/user/profile-pic'), { method:'DELETE', headers: { ...(u.token ? { Authorization: `Bearer ${u.token}` } : {}) } });
+          if(!res.ok) throw 0; avatarEl.removeAttribute('src'); alert('Removed profile picture.');
+        }catch{ avatarEl.removeAttribute('src'); }
+      });
+    form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        try{
+          const headers = { 'Content-Type':'application/json' };
+          if(u.token) headers.Authorization = `Bearer ${u.token}`;
+          const res = await fetch(API('/user'),{ method:'PATCH', headers, body: JSON.stringify({ name: name.value.trim() })});
+          if(res.ok){ const data = await res.json(); localStorage.setItem('tidex-user-v1', JSON.stringify({...u, name: data.name||name.value.trim()})); alert('Profile updated.'); }
+          else { alert('Saved locally.'); localStorage.setItem('tidex-user-v1', JSON.stringify({...u, name: name.value.trim()})); }
+        }catch{ localStorage.setItem('tidex-user-v1', JSON.stringify({...u, name: name.value.trim()})); alert('Saved locally.'); }
+      });
+
+      // Delete account
+      document.getElementById('delete-account').addEventListener('click', async ()=>{
+        if(!confirm('Delete your account? This cannot be undone.')) return;
+        try{
+          const headers = { };
+          if(u.token) headers.Authorization = `Bearer ${u.token}`;
+          const res = await fetch(API('/user'), { method:'DELETE', headers });
+          if(res.ok){ localStorage.removeItem('tidex-user-v1'); location.href='index.html'; return; }
+        }catch{}
+        // Fallback local delete
+        localStorage.removeItem('tidex-user-v1'); location.href='index.html';
+      });
+
+      const pform = document.getElementById('password-form');
+      pform.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const current = document.getElementById('current').value;
+        const np = document.getElementById('newpass').value;
+        const cp = document.getElementById('confirm').value;
+        if(np.length < 6) return alert('New password must be at least 6 characters');
+        if(np !== cp) return alert('Passwords do not match');
+        try{
+          const headers = { 'Content-Type':'application/json' };
+          if(u.token) headers.Authorization = `Bearer ${u.token}`;
+          const res = await fetch(API('/user/password'), { method:'POST', headers, body: JSON.stringify({ current, next: np })});
+          if(!res.ok) throw 0; alert('Password changed.');
+        }catch{ alert('Password change simulated (no backend).'); }
+      });
+
+      // Password visibility toggles on this page
+      document.addEventListener('click', (e)=>{
+        const btn = e.target.closest('[data-toggle="password"]');
+        if(!btn) return;
+        const id = btn.getAttribute('data-target');
+        const input = document.getElementById(id);
+        if(!input) return;
+        input.type = input.type === 'password' ? 'text' : 'password';
+      });
+
+      // Addresses
+      const addrList = document.getElementById('addr-list');
+      async function loadAddrs(){
+        addrList.innerHTML = '<p class="muted">Loading…</p>';
+        try{
+          const headers = { };
+          if(u.token) headers.Authorization = `Bearer ${u.token}`;
+          const res = await fetch(API('/user/addresses'), { headers });
+          const arr = res.ok ? await res.json() : [];
+          if(!arr.length){ addrList.innerHTML = '<p class="muted">No addresses yet.</p>'; return; }
+          addrList.innerHTML = '';
+          arr.forEach(a => {
+            const row = document.createElement('div');
+            row.className = 'row between start';
+            row.style.border = '1px solid var(--border)';
+            row.style.borderRadius = '10px';
+            row.style.padding = '10px';
+            row.innerHTML = `
+              <div>
+                <strong>${a.label || 'Address'}</strong> ${a.isDefault ? '<span class="muted xs">(Default)</span>' : ''}<br/>
+                <span class="muted xs">${[a.name,a.phone].filter(Boolean).join(' • ')}</span><br/>
+                <span class="xs">${[a.line1,a.line2,a.city,a.state,a.zip,a.country].filter(Boolean).join(', ')}</span>
+              </div>
+              <div class="row" style="gap:8px">
+                ${a.isDefault ? '' : '<button class="btn" data-addr-default="'+a._id+'">Make default</button>'}
+                <button class="btn" data-addr-del="${a._id}">Delete</button>
+              </div>`;
+            addrList.appendChild(row);
+          });
+        }catch{ addrList.innerHTML = '<p class="muted">No addresses yet.</p>'; }
+      }
+      loadAddrs();
+
+      document.getElementById('addr-form').addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const payload = {
+          label: document.getElementById('addr-label').value.trim(),
+          name: document.getElementById('addr-name').value.trim(),
+          phone: document.getElementById('addr-phone').value.trim(),
+          line1: document.getElementById('addr-line1').value.trim(),
+          line2: document.getElementById('addr-line2').value.trim(),
+          city: document.getElementById('addr-city').value.trim(),
+          state: document.getElementById('addr-state').value.trim(),
+          zip: document.getElementById('addr-zip').value.trim(),
+          country: document.getElementById('addr-country').value.trim(),
+          isDefault: document.getElementById('addr-default').checked,
+        };
+        try{
+          const headers = { 'Content-Type':'application/json' };
+          if(u.token) headers.Authorization = `Bearer ${u.token}`;
+          const res = await fetch(API('/user/addresses'), { method:'POST', headers, body: JSON.stringify(payload) });
+          if(!res.ok) throw 0; e.target.reset(); loadAddrs();
+        }catch{ alert('Saved locally only (backend unavailable).'); }
+      });
+
+      document.addEventListener('click', async (e)=>{
+        const t = e.target;
+        if(t.matches('[data-addr-del]')){
+          const id = t.getAttribute('data-addr-del');
+          if(!confirm('Delete this address?')) return;
+          try{ const headers = {}; if(u.token) headers.Authorization = `Bearer ${u.token}`; await fetch(API('/user/addresses/'+id), { method:'DELETE', headers }); loadAddrs(); }catch{ loadAddrs(); }
+        }
+        if(t.matches('[data-addr-default]')){
+          const id = t.getAttribute('data-addr-default');
+          try{ const headers = {}; if(u.token) headers.Authorization = `Bearer ${u.token}`; await fetch(API('/user/addresses/'+id+'/default'), { method:'PATCH', headers }); loadAddrs(); }catch{ loadAddrs(); }
+        }
+      });
+
+      // Orders
+      const ordersEl = document.getElementById('orders');
+      async function loadOrders(){
+        ordersEl.innerHTML = '<p class="muted">Loading…</p>';
+        try{
+          const headers = {}; if(u.token) headers.Authorization = `Bearer ${u.token}`;
+          const res = await fetch(API('/my/orders'), { headers });
+          const arr = res.ok ? await res.json() : [];
+          if(!arr.length){ ordersEl.innerHTML = '<p class="muted">No orders yet.</p>'; return; }
+          ordersEl.innerHTML = '';
+          arr.forEach(o => {
+            const card = document.createElement('div');
+            card.className = 'auth-body';
+            card.style.border = '1px solid var(--border)';
+            card.style.borderRadius = '10px';
+            card.style.padding = '10px';
+            const items = (o.items||[]).map(i=>`${i.title} × ${i.qty}`).join(', ');
+            card.innerHTML = `<div class="row between start"><div><strong>Order ${o._id.slice(-6)}</strong> <span class="muted xs">• ${new Date(o.createdAt).toLocaleString()}</span><br/><span class="xs">${items}</span></div><div><strong>${o.subtotal?.toFixed(2)}</strong><div class="muted xs" style="text-align:right">${o.status}</div></div></div>`;
+            ordersEl.appendChild(card);
+          });
+        }catch{ ordersEl.innerHTML = '<p class="muted">No orders yet.</p>'; }
+      }
+      loadOrders();
+
+      // Preferences
+      document.getElementById('theme-toggle-pref').addEventListener('click', ()=>{
+        const next = root.classList.contains('theme-light') ? 'dark' : 'light';
+        root.classList.toggle('theme-light', next==='light');
+        localStorage.setItem('tidex-theme', next);
+      });
+      document.getElementById('signout').addEventListener('click', ()=>{ localStorage.removeItem('tidex-user-v1'); location.href='index.html'; });
+  })();
+  </script>
+</body>
+</html>

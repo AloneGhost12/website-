@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tidex Admin — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="brand"><img src="assets/logo.svg" alt="" /><strong>Tidex Admin</strong></div>
+      <div class="row">
+        <button id="admin-theme" class="btn" title="Toggle theme">Theme</button>
+        <a href="index.html" class="btn">Storefront</a>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <section class="card fade" style="max-width:520px;margin:40px auto;">
+      <h2>Admin access</h2>
+      <p style="color:#8a94a6">Login with admin credentials or use an Admin Key.</p>
+
+      <div class="card" style="margin-top:12px">
+        <h4 style="margin-bottom:8px">Login with credentials</h4>
+        <div class="row" style="gap:8px;align-items:center">
+          <input id="username" class="input" placeholder="Username (e.g. admin)" style="flex:1" />
+          <input id="password" class="input" placeholder="Password" type="password" style="flex:1" />
+          <button id="login" class="btn primary">Login</button>
+        </div>
+        <p class="fade" id="login-msg" style="color:#e66;font-size:12px;margin-top:8px;display:none"></p>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h4 style="margin-bottom:8px">Or, use Admin Key</h4>
+        <div class="row" style="margin-top:10px">
+          <input id="key" class="input" placeholder="Admin Key" style="flex:1" />
+          <button id="go" class="btn">Continue</button>
+        </div>
+        <p class="fade" style="color:#8a94a6;font-size:12px;margin-top:8px">Set ADMIN_KEY (and optionally ADMIN_USERNAME/ADMIN_PASSWORD) in server/.env.</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    (function(){
+      const key = 'tidex-admin-theme';
+      const root = document.body;
+      function setTheme(t){ root.classList.toggle('theme-light', t==='light'); localStorage.setItem(key, t); }
+      setTheme(localStorage.getItem(key) || 'dark');
+      document.getElementById('admin-theme').addEventListener('click', ()=>{
+        const next = root.classList.contains('theme-light') ? 'dark' : 'light';
+        setTheme(next);
+      });
+    })();
+    // If already logged in (have a key), go straight to admin
+    (function(){
+      const existing = localStorage.getItem('tidex-admin-key');
+      if(existing){ location.href = 'admin.html'; }
+    })();
+
+    const API_BASE = localStorage.getItem('tidex-api') || 'http://localhost:3000';
+    document.getElementById('go').onclick = () => {
+      const key = document.getElementById('key').value.trim();
+      if(!key) return alert('Enter Admin Key');
+      localStorage.setItem('tidex-admin-key', key);
+      location.href = 'admin.html';
+    };
+    async function credentialLogin(){
+      const u = document.getElementById('username').value.trim();
+      const p = document.getElementById('password').value.trim();
+      const msg = document.getElementById('login-msg');
+      msg.style.display = 'none';
+      if(!u || !p){ msg.textContent = 'Enter username and password'; msg.style.display = 'block'; return; }
+      try{
+        const res = await fetch(`${API_BASE}/api/admin/login`, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+        if(!res.ok){ const d = await res.json().catch(()=>({})); msg.textContent = d.error || 'Invalid credentials'; msg.style.display = 'block'; return; }
+        const data = await res.json();
+        if(!data || !data.key){ msg.textContent = 'Login response missing key'; msg.style.display = 'block'; return; }
+        localStorage.setItem('tidex-admin-key', data.key);
+        location.href = 'admin.html';
+      }catch(err){ msg.textContent = 'Could not reach server'; msg.style.display = 'block'; }
+    }
+    document.getElementById('login').onclick = credentialLogin;
+    ['username','password'].forEach(id=>{
+      document.getElementById(id).addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ credentialLogin(); } });
+    });
+  </script>
+</body>
+</html>
