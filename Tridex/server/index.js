@@ -1,60 +1,6 @@
-// In-memory OTP store (for demo; use Redis or DB in production)
+// In-memory OTP and chat history store (for demo; use Redis/DB in production)
 const otpStore = {};
 const otpExpiry = 10 * 60 * 1000; // 10 minutes
-
-// Send OTP to email
-app.post('/api/auth/forgot-password', async (req, res) => {
-  try {
-    const { email } = req.body || {};
-    if(!email) return res.status(400).json({ error: 'Email required' });
-    const user = await User.findOne({ email: String(email).toLowerCase().trim() });
-    if(!user) return res.status(404).json({ error: 'No user with that email' });
-    // Generate OTP
-    const otp = String(Math.floor(100000 + Math.random() * 900000));
-    otpStore[email] = { otp, expires: Date.now() + otpExpiry };
-    // Send email
-    try {
-      const nodemailer = require('nodemailer');
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT||587),
-        secure: false,
-        auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined
-      });
-      await transporter.sendMail({
-        from: process.env.MAIL_FROM || 'no-reply@tidex.local',
-        to: email,
-        subject: 'Tidex Password Reset OTP',
-        text: `Your Tidex password reset OTP is: ${otp}\nThis code is valid for 10 minutes.`
-      });
-    } catch(e) {
-      console.warn('OTP email send failed:', e.message);
-      return res.status(500).json({ error: 'Failed to send email' });
-    }
-    res.json({ ok: true });
-  } catch(err) {
-    console.error(err); res.status(500).json({ error: 'Internal error' });
-  }
-});
-
-// Reset password with OTP
-app.post('/api/auth/reset-password', async (req, res) => {
-  try {
-    const { email, otp, newPassword } = req.body || {};
-    if(!email || !otp || !newPassword) return res.status(400).json({ error: 'Missing fields' });
-    const entry = otpStore[email];
-    if(!entry || entry.otp !== otp || Date.now() > entry.expires) return res.status(400).json({ error: 'Invalid or expired OTP' });
-    if(newPassword.length < 6) return res.status(400).json({ error: 'Password too short' });
-    const user = await User.findOne({ email: String(email).toLowerCase().trim() });
-    if(!user) return res.status(404).json({ error: 'User not found' });
-    user.passwordHash = await bcrypt.hash(newPassword, 10);
-    await user.save();
-    delete otpStore[email];
-    res.json({ ok: true });
-  } catch(err) {
-    console.error(err); res.status(500).json({ error: 'Internal error' });
-  }
-});
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -527,6 +473,117 @@ app.post('/api/admin/announce', requireAdmin, async (req, res) => {
 app.get('/api/announcements', async (req, res) => {
   const list = await Announcement.find().sort({ createdAt: -1 }).limit(20);
   res.json(list);
+});
+
+// Forgot-password OTP: send code
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body || {};
+    if(!email) return res.status(400).json({ error: 'Email required' });
+    const user = await User.findOne({ email: String(email).toLowerCase().trim() });
+    if(!user) return res.status(404).json({ error: 'No user with that email' });
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    otpStore[email] = { otp, expires: Date.now() + otpExpiry };
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT||587),
+        secure: false,
+        auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } : undefined
+      });
+      await transporter.sendMail({
+        from: process.env.MAIL_FROM || 'no-reply@tidex.local',
+        to: email,
+        subject: 'Tidex Password Reset OTP',
+        text: `Your Tidex password reset OTP is: ${otp}\nThis code is valid for 10 minutes.`
+      });
+    } catch(e) {
+      console.warn('OTP email send failed:', e.message);
+      return res.status(500).json({ error: 'Failed to send email' });
+    }
+    res.json({ ok: true });
+  } catch(err) {
+    console.error(err); res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Reset password with OTP
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body || {};
+    if(!email || !otp || !newPassword) return res.status(400).json({ error: 'Missing fields' });
+    const entry = otpStore[email];
+    if(!entry || entry.otp !== otp || Date.now() > entry.expires) return res.status(400).json({ error: 'Invalid or expired OTP' });
+    if(newPassword.length < 6) return res.status(400).json({ error: 'Password too short' });
+    const user = await User.findOne({ email: String(email).toLowerCase().trim() });
+    if(!user) return res.status(404).json({ error: 'User not found' });
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    delete otpStore[email];
+    res.json({ ok: true });
+  } catch(err) {
+    console.error(err); res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Simple rule-based chatbot endpoint
+app.post('/api/chat', async (req, res) => {
+  try{
+    const { message, history } = req.body || {};
+    const qRaw = String(message || '');
+    const q = qRaw.toLowerCase();
+
+    // Optional personalization if user is authenticated
+    let me = null;
+    const hdr = req.get('Authorization')||'';
+    const [,token] = hdr.split(' ');
+    if(token){
+      try{ const p = jwt.verify(token, JWT_SECRET); me = await User.findById(p.sub).lean(); }catch{}
+    }
+
+    // Simple follow-up context using last user question
+    const lastUser = Array.isArray(history) ? history.slice().reverse().find(m=>m.role==='user') : null;
+
+    const links = {
+      orders: `${req.protocol}://${req.get('host')}/account.html`,
+      home: `${req.protocol}://${req.get('host')}/index.html`,
+      login: `${req.protocol}://${req.get('host')}/login.html`,
+      forgot: `${req.protocol}://${req.get('host')}/forgot-password.html`,
+      account: `${req.protocol}://${req.get('host')}/account.html`,
+    };
+
+    // Personalized order status hint if asked
+    if(/order.*(status|track|tracking)|track.*order/.test(q)){
+      let prefix = 'You can check your order status in Account → Orders';
+      if(me){
+        const recent = await Order.findOne({ userId: me._id }).sort({ createdAt: -1 }).lean();
+        if(recent){
+          prefix = `Your latest order (${String(recent._id).slice(-6)}) is currently “${recent.status}”.`;
+        }
+      }
+      return res.json({ answer: `${prefix}. Open: ${links.orders}` });
+    }
+
+    const replies = [
+      { re: /(shipping|delivery|ship|arrive|when)/, ans: `Shipping typically takes 3-7 days depending on your location. You'll receive tracking after dispatch. See products on ${links.home}` },
+      { re: /(return|refund|exchange)/, ans: `Returns are accepted within 7 days of delivery if unused and in original packaging. Start from Account → Orders (${links.account}).` },
+      { re: /(payment|pay|card|upi|cod|cash on delivery)/, ans: 'We accept cards, UPI, and wallets. Cash on delivery isn\'t available right now.' },
+      { re: /(account|profile|password|login|signup|sign up|sign-in)/, ans: `Manage your profile and password in Account (${links.account}). Use “Forgot password” to reset via OTP email (${links.forgot}).` },
+      { re: /(contact|support|help|admin)/, ans: 'Reach support via the announcements mailbox or email. Admin tasks are in the Admin panel (requires admin key).' },
+      { re: /(products?|item|price|stock|available)/, ans: `Browse products on the home page (${links.home}). Each product page shows price, rating, and availability.` },
+    ];
+    const found = replies.find(r => r.re.test(q));
+    if(found) return res.json({ answer: found.ans });
+
+    // Follow-up nudges
+    if(lastUser && /that|it|this/.test(q) && /order|return|shipping/.test(lastUser.text||'')){
+      return res.json({ answer: 'If you meant your previous question, you can find details under Account → Orders.' });
+    }
+
+    const fallback = 'I can help with shipping, returns, orders, account, and products. Try “What is your return policy?”';
+    res.json({ answer: fallback });
+  }catch(err){ console.error(err); res.status(500).json({ error: 'Internal error' }); }
 });
 
 // Admin products
